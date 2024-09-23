@@ -1,0 +1,40 @@
+<h1 class="text-2xl font-bold mb-4"><%= @workspace.name %></h1>
+
+<p class="mb-4"><%= @workspace.description %></p>
+
+<div class="mb-8">
+  <h2 class="text-xl font-bold mb-2">Members</h2>
+  <table class="min-w-full bg-white text-left">
+    <thead>
+      <tr>
+        <th class="py-2">Name</th>
+        <th class="py-2">Email</th>
+        <th class="py-2">Role</th>
+        <% if policy(@workspace).manage_members? %>
+          <th class="py-2">Actions</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @workspace.memberships.includes(:user).each do |membership| %>
+        <tr>
+          <td class="py-2"><%= membership.user.name %></td>
+          <td class="py-2"><%= membership.user.email %></td>
+          <td class="py-2 capitalize"><%= membership.role %></td>
+          <% if policy(@workspace).manage_members? %>
+            <td class="py-2">
+              <% unless membership.owner? %>
+                <%= link_to "Change Role", edit_workspace_membership_path(@workspace, membership), class: "text-blue-600" %>
+                <%= link_to "Remove", workspace_membership_path(@workspace, membership), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 ml-2" %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if policy(@workspace).manage_members? %>
+  <%= link_to "Invite Member", manage_members_workspace_path(@workspace), class: "px-4 py-2 bg-blue-600 text-white rounded" %>
+<% end %>

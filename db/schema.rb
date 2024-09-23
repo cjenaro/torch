@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_23_120614) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_23_125023) do
+  create_table "memberships", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "workspace_id", null: false
+    t.integer "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+    t.index ["workspace_id"], name: "index_memberships_on_workspace_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -24,4 +34,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_120614) do
     t.string "reset_digest"
     t.datetime "reset_sent_at"
   end
+
+  create_table "workspaces", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "memberships", "users"
+  add_foreign_key "memberships", "workspaces"
 end
