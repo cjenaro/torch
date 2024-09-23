@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  icon: MyString
+  cover_image: MyString
+  parent: one
+  workspace: one
+  creator: one
+  creator_type: Creator
+  is_template: false
+  is_archived: false
+
+two:
+  title: MyString
+  icon: MyString
+  cover_image: MyString
+  parent: two
+  workspace: two
+  creator: two
+  creator_type: Creator
+  is_template: false
+  is_archived: false

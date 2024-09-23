@@ -1,0 +1,6 @@
+<h1 class="text-3xl font-bold mb-4"><%= @page.title %></h1>
+
+<%= link_to "Edit Page", edit_workspace_page_path(@workspace, @page), class: "text-blue-600" %> |
+<%= link_to "Delete Page", workspace_page_path(@workspace, @page), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600" %>
+
+<p>Page content goes here...</p>

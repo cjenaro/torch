@@ -35,4 +35,39 @@
   .alert-alert {
     @apply bg-red-100 border border-red-400 text-red-700;
   }
+
+  .sidebar::backdrop {
+    @apply bg-gray-900/0;
+    transition:
+      display 250ms allow-discrete,
+      overlay 250ms allow-discrete,
+      background-color 250ms ease-in-out;
+  }
+
+  .sidebar:popover-open::backdrop {
+    @apply bg-gray-900/80;
+  }
+
+  @starting-style {
+    .sidebar:popover-open::backdrop {
+      @apply bg-gray-900/0;
+    }
+  }
+
+  .sidebar>div>div {
+    translate: -100% 0;
+    opacity: 0;
+    transition: opacity 250ms ease-in-out, translate 250ms ease-in-out, overlay 250ms allow-discrete, display 250ms allow-discrete;
+  }
+
+  .sidebar:popover-open>div>div {
+    /* animation: slide-in 100ms ease-in forwards; */
+    translate: 0 0;
+    opacity: 1;
+
+    @starting-style {
+      translate: -100% 0;
+      opacity: 0;
+    }
+  }
 }

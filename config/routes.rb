@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   get "sessions/new"
   get "sessions/create"
   get "sessions/destroy"
-  get "pages/home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -14,7 +13,7 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root "pages#home"
+  root "workspaces#index"
 
   get "signup", to: "users#new"
   resources :users, only: [ :create, :show ]
@@ -28,6 +27,12 @@ Rails.application.routes.draw do
   resources :workspaces do
     member do
       get :manage_members
+    end
+
+    resources :pages do
+      member do
+        get :duplicate
+      end
     end
   end
 end

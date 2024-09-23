@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_23_134911) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_23_164657) do
   create_table "activities", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "workspace_id", null: false
@@ -31,6 +31,23 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_134911) do
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_memberships_on_user_id"
     t.index ["workspace_id"], name: "index_memberships_on_workspace_id"
+  end
+
+  create_table "pages", force: :cascade do |t|
+    t.string "title"
+    t.string "icon"
+    t.string "cover_image"
+    t.integer "parent_id"
+    t.integer "workspace_id", null: false
+    t.string "creator_type", null: false
+    t.integer "creator_id", null: false
+    t.boolean "is_template"
+    t.boolean "is_archived"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_pages_on_creator"
+    t.index ["parent_id"], name: "index_pages_on_parent_id"
+    t.index ["workspace_id"], name: "index_pages_on_workspace_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -58,4 +75,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_134911) do
   add_foreign_key "activities", "workspaces"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "workspaces"
+  add_foreign_key "pages", "pages", column: "parent_id"
+  add_foreign_key "pages", "workspaces"
 end
