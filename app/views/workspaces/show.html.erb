@@ -2,39 +2,65 @@
 
 <p class="mb-4"><%= @workspace.description %></p>
 
-<div class="mb-8">
-  <h2 class="text-xl font-bold mb-2">Members</h2>
-  <table class="min-w-full bg-white text-left">
-    <thead>
-      <tr>
-        <th class="py-2">Name</th>
-        <th class="py-2">Email</th>
-        <th class="py-2">Role</th>
-        <% if policy(@workspace).manage_members? %>
-          <th class="py-2">Actions</th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% @workspace.memberships.includes(:user).each do |membership| %>
-        <tr>
-          <td class="py-2"><%= membership.user.name %></td>
-          <td class="py-2"><%= membership.user.email %></td>
-          <td class="py-2 capitalize"><%= membership.role %></td>
-          <% if policy(@workspace).manage_members? %>
-            <td class="py-2">
-              <% unless membership.owner? %>
-                <%= link_to "Change Role", edit_workspace_membership_path(@workspace, membership), class: "text-blue-600" %>
-                <%= link_to "Remove", workspace_membership_path(@workspace, membership), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 ml-2" %>
-              <% end %>
-            </td>
-          <% end %>
-        </tr>
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h2 class="text-base font-semibold leading-6 text-gray-900">Members</h2>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <% if policy(@workspace).manage_members? %>
+        <%= link_to "Invite Member", manage_members_workspace_path(@workspace), class: "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  </div>
+   <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 sm:-mx-6 lg:-mx-8 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+      <div class="inline-block min-w-full py-2 align-middle">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th scope="col" class="sticky top-0 z-10 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">Name</th>
+              <th scope="col" class="sticky top-0 z-10 hidden bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter lg:table-cell">Email</th>
+              <th scope="col" class="sticky top-0 z-10 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Role</th>
+              <% if policy(@workspace).manage_members? %>
+                <th class="sticky top-0 z-10 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Actions</th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% @workspace.memberships.includes(:user).each do |membership| %>
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"><%= membership.user.name %></td>
+                <td class="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 lg:table-cell"><%= membership.user.email %></td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize"><%= membership.role %></td>
+                <% if policy(@workspace).manage_members? %>
+                  <td class="flex flex-col md:flex-row relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-8 lg:pr-8">
+                    <% unless membership.owner? %>
+                      <%= link_to "Change Role", edit_workspace_membership_path(@workspace, membership), class: "text-indigo-600 hover:text-indigo-900" %>
+                      <%= link_to "Remove", workspace_membership_path(@workspace, membership), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900 ml-2" %>
+                    <% end %>
+
+                    <% if membership.owner? %>
+                      -
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
-<% if policy(@workspace).manage_members? %>
-  <%= link_to "Invite Member", manage_members_workspace_path(@workspace), class: "px-4 py-2 bg-blue-600 text-white rounded" %>
-<% end %>
+<div class="mt-8">
+  <h2 class="text-xl font-bold mb-2">Recent Activity</h2>
+  <ul>
+    <% @workspace.activities.order(created_at: :desc).limit(10).each do |activity| %>
+      <li class="mb-2">
+        <%= activity.user.name %> <%= activity.action %> <%= activity.trackable_type.downcase %> <%= link_to activity.trackable.try(:title) || activity.trackable_type, [@workspace, activity.trackable] %> at <%= activity.created_at.strftime("%Y-%m-%d %H:%M") %>
+      </li>
+    <% end %>
+  </ul>
+</div>

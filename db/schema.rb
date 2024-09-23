@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_23_125023) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_23_134911) do
+  create_table "activities", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "workspace_id", null: false
+    t.string "action"
+    t.string "trackable_type"
+    t.integer "trackable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_activities_on_user_id"
+    t.index ["workspace_id"], name: "index_activities_on_workspace_id"
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "workspace_id", null: false
@@ -42,6 +54,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_23_125023) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "activities", "users"
+  add_foreign_key "activities", "workspaces"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "workspaces"
 end
