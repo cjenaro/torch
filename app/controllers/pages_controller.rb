@@ -6,13 +6,22 @@ class PagesController < ApplicationController
 
   def new
     @page = @workspace.pages.new(parent_id: params[:parent_id])
+    @templates = @workspace.pages.where(is_template: true)
   end
 
   def create
     @page = @workspace.pages.new(page_params)
     @page.creator = current_user
 
+    if params[:template_id].present?
+      template = @workspace.pages.find(params[:template_id])
+      @page.blocks = template.blocks.map do |block|
+        block.dup
+      end
+    end
+
     if @page.save
+      @workspace.activities.create(user: current_user, action: 'created', trackable: @page)
       flash[:notice] = "Page created"
       redirect_to workspace_page_path(@workspace, @page)
     else
@@ -29,6 +38,7 @@ class PagesController < ApplicationController
 
   def update
     if @page.update
+      @workspace.activities.create(user: current_user, action: 'updated', trackable: @page)
       flash[:notice] = "Page updated"
       redirect_to workspace_page_path(@workspace, @page)
     else

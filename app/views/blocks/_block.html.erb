@@ -1,0 +1,54 @@
+<turbo-frame id="<%= dom_id(block) %>"
+             data-block-id="<%= block.id %>"
+             data-update-url="<%= workspace_page_block_path(@workspace, @page, block) %>"
+             data-block-position="<%= block.position %>">
+  <div class="block" data-controller="block" data-block-id="<%= block.id %>" data-block-position="<%= block.position %>">
+    <% if block.block_type == 'text' %>
+      <div data-action="click->block#edit">
+        <div class="prose">
+          <%= block.content.body %>
+        </div>
+      </div>
+      <div data-block-target="editor" class="hidden">
+        <%= form_with model: [@workspace, @page, block], remote: true do |f| %>
+          <%= f.rich_text_area :content, class: "w-full" %>
+          <%= f.submit "Save", class: "btn btn-primary mt-2" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if block.block_type == 'image' %>
+      <div>
+        <%= image_tag block.attachment.variant(resize_to_limit: [800, 600]) %>
+        <%= form_with model: [@workspace, @page, block], method: :delete, data: { confirm: "Are you sure?" }, class: "mt-2" do |f| %>
+          <%= f.submit "Remove Image", class: "btn btn-secondary" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if block.block_type == 'list' %>
+      <ul class="list-disc pl-5">
+        <% block.data['items'].each_with_index do |item, index| %>
+          <li data-action="click->block#editItem" data-block-target="item" data-index="<%= index %>">
+            <%= item %>
+          </li>
+        <% end %>
+      </ul>
+      <!-- Form for editing list items -->
+    <% end %>
+
+    <% if block.block_type == 'code' %>
+      <div data-action="click->block#edit">
+        <pre><code class="language-<%= block.data['language'] || 'plaintext' %>"><%= block.content %></code></pre>
+      </div>
+      <div data-block-target="editor" class="hidden">
+        <%= form_with model: [@workspace, @page, block], remote: true do |f| %>
+          <%= f.select :data, options_for_select(['ruby', 'javascript', 'python'], block.data['language']), {}, class: "w-full px-4 py-2 border rounded mb-2" %>
+          <%= f.text_area :content, class: "w-full px-4 py-2 border rounded", rows: 5 %>
+          <%= f.submit "Save", class: "btn btn-primary mt-2" %>
+        <% end %>
+      </div>
+    <% end %>
+    <!-- Handle other block types similarly -->
+  </div>
+</turbo-frame>

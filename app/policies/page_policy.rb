@@ -15,7 +15,7 @@ class PagePolicy < ApplicationPolicy
   private
   
   def user_in_workspace?
-    record.users.include?(user)
+    record.workspace.users.include?(user)
   end
 
   def user_is_owner_or_admin?
@@ -23,7 +23,7 @@ class PagePolicy < ApplicationPolicy
   end
 
   def membership
-    @membership ||= record.memberships.find_by(user: user)
+    @membership ||= record.workspace.memberships.find_by(user: user)
   end
 
   class Scope < ApplicationPolicy::Scope

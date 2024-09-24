@@ -1,6 +1,9 @@
 <h1 class="text-3xl font-bold mb-4"><%= @page.title %></h1>
 
-<%= link_to "Edit Page", edit_workspace_page_path(@workspace, @page), class: "text-blue-600" %> |
-<%= link_to "Delete Page", workspace_page_path(@workspace, @page), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600" %>
+<div id="blocks" data-controller="sortable">
+  <%= render @page.blocks %>
+</div>
 
-<p>Page content goes here...</p>
+<button onclick="document.querySelector('#new-block-form').classList.toggle('hidden')" class="mt-4 btn btn-primary">Add Block</button>
+
+<%= render partial: "blocks/form", locals: { block: @page.blocks.new } %>

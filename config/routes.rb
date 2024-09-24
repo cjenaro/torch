@@ -30,9 +30,7 @@ Rails.application.routes.draw do
     end
 
     resources :pages do
-      member do
-        get :duplicate
-      end
+      resources :blocks, only: [:create, :update, :destroy]
     end
   end
 end

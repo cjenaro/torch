@@ -9,4 +9,6 @@ class Page < ApplicationRecord
   has_many :activities, as: :trackable, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 255 }
+
+  attribute :is_template, :boolean, default: false
 end

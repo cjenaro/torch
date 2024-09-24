@@ -1,0 +1,5 @@
+<%= turbo_stream.append 'blocks', partial: 'blocks/block', locals: { block: @block } %>
+
+<%= turbo_stream.replace 'new_block' do %>
+  <%= render 'blocks/form', block: Block.new %>
+<% end %>

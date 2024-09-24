@@ -1,0 +1,13 @@
+<turbo-frame id="new_block">
+  <div id="new-block-form" class="hidden mt-4">
+    <%= form_with model: [@workspace, @page, block], remote: true, html: { multipart: true } do |f| %>
+      <%= f.select :block_type, [['Text', 'text'], ['Image', 'image']], {}, class: "w-full px-4 py-2 border rounded mb-2" %>
+      <% if block.block_type == 'image' %>
+        <%= f.file_field :attachment, class: "w-full px-4 py-2 border rounded" %>
+      <% else %>
+        <%= f.rich_text_area :content, placeholder: "Type your content here...", class: "w-full" %>
+      <% end %>
+      <%= f.submit "Add", class: "btn btn-primary mt-2" %>
+    <% end %>
+  </div>
+</turbo-frame>
