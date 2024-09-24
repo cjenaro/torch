@@ -21,6 +21,8 @@ function getBlockData(el) {
 
 export default class extends Controller {
   connect() {
+    console.log("LOADED SORTABLE")
+    console.log(this.element)
     combine(
       draggable({
         element: this.element,
@@ -54,35 +56,35 @@ export default class extends Controller {
           if (source.element === this.element) return false;
 
           return !!source.data.position && !!source.data.id
+        },
+        getData({ input, element }) {
+          const data = getBlockData(element) 
+          return attachClosestEdge(data, {
+            input,
+            element,
+            allowedEdges: ['top', 'bottom']
+          })
+        },
+        getIsSticky() {
+          return true
+        },
+        onDragEnter({ self }) {
+          const closestEdge = extractClosestEdge(self.data);
+          console.log("Dragging over", closestEdge)
+        },
+        onDrag({ self }) {
+          const closestEdge = extractClosestEdge(self.data);
+
+          // if STATUS.type !== dragging-over && STATUS.currentEdge !== closestEdge
+          // UPDATE STATUS
+        },
+        onDragLeave() {
+          // STATUS to idle
+        },
+        onDrop() {
+          // STATUS to idle
         }
       }),
-      getData({ input, element }) {
-        const data = getBlockData(element) 
-        return attachClosestEdge(data, {
-          input,
-          element,
-          allowedEdges: ['top', 'bottom']
-        })
-      },
-      getIsSticky() {
-        return true
-      },
-      onDragEnter({ self }) {
-        const closestEdge = extractClosestEdge(self.data);
-        console.log("Dragging over", closestEdge)
-      },
-      onDrag({ self }) {
-        const closestEdge = extractClosestEdge(self.data);
-
-        // if STATUS.type !== dragging-over && STATUS.currentEdge !== closestEdge
-        // UPDATE STATUS
-      },
-      onDragLeave() {
-        // STATUS to idle
-      },
-      onDrop() {
-        // STATUS to idle
-      }
     )
   }
 
