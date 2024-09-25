@@ -1,9 +1,11 @@
-<h1 class="text-3xl font-bold mb-4"><%= @page.title %></h1>
+<div class="px-6">
+  <h1 class="text-3xl font-bold mb-4"><%= @page.title %></h1>
 
-<div id="blocks" data-controller="sortable">
-  <%= render @page.blocks %>
+  <div id="blocks" data-workspace-id="<%= @workspace.id %>" data-page-id="<%= @page.id %>">
+    <%= render @page.blocks %>
+  </div>
+
+  <button onclick="document.querySelector('#new-block-form').classList.toggle('hidden')" class="mt-4 btn btn-primary">Add Block</button>
+
+  <%= render partial: "blocks/form", locals: { block: @page.blocks.new } %>
 </div>
-
-<button onclick="document.querySelector('#new-block-form').classList.toggle('hidden')" class="mt-4 btn btn-primary">Add Block</button>
-
-<%= render partial: "blocks/form", locals: { block: @page.blocks.new } %>

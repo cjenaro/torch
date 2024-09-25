@@ -1,8 +1,11 @@
-<turbo-frame id="<%= dom_id(block) %>"
-             data-block-id="<%= block.id %>"
-             data-update-url="<%= workspace_page_block_path(@workspace, @page, block) %>"
-             data-block-position="<%= block.position %>">
-  <div class="block" data-controller="block" data-block-id="<%= block.id %>" data-block-position="<%= block.position %>">
+<turbo-frame id="<%= dom_id(block) %>">
+  <div class="block relative py-4 group" data-controller="block sortable" data-block-id="<%= block.id %>" data-block-position="<%= block.position %>" data-update-url="<%= workspace_page_block_path(@workspace, @page, block) %>">
+    <button class="flex flex-col cursor-grab invisible group-hover:visible group-focus:visible justify-evenly items-center drag-handle absolute right-full w-4 h-6">
+      <span class="sr-only">Drag to re-order</span>
+      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
+    </button>
     <% if block.block_type == 'text' %>
       <div data-action="click->block#edit">
         <div class="prose">

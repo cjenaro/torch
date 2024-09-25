@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 import {
   draggable,
@@ -15,93 +15,143 @@ import {
 function getBlockData(el) {
   return {
     id: el.dataset.blockId,
-    position: el.dataset.blockPosition
-  }
+    position: parseInt(el.dataset.blockPosition, 10),
+  };
 }
 
 export default class extends Controller {
   connect() {
-    console.log("LOADED SORTABLE")
-    console.log(this.element)
+    this.dragHandle = this.element.querySelector('.drag-handle');
+
     combine(
       draggable({
-        element: this.element,
-        getInitialData() {
-          return getBlockData(this.element)
+        element: this.dragHandle,
+        getInitialData: () => {
+          return getBlockData(this.element);
         },
-        onGenerateDragPreview({ nativeSetDragImage }) {
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: pointerOutsideOfPreview({
               x: '16px',
               y: '8px',
             }),
-            render({ container }) {
-              // setState({ type: 'preview', container });
-              // STATUS === preview, el container
+            render: ({ container }) => {
+              // Customize your drag preview here if needed
+              console.log('Drag preview container:', container);
             },
           });
         },
-        onDragStart() {
-          //setState({ type: 'is-dragging' });
-          // STATUS === dragging
-        },        
-        onDrop() {
-          console.log("DROPPED ELEMENT")
-        }
+        onDragStart: () => {
+          this.setDraggingStatus();
+        },
+        onDrop: ({ location }) => {
+          this.setIdleStatus();
+        },
       }),
       dropTargetForElements({
         element: this.element,
-        canDrop({ source }) {
+        canDrop: ({ source }) => {
           if (source.element === this.element) return false;
 
-          return !!source.data.position && !!source.data.id
+          return !!source.data.position && !!source.data.id;
         },
-        getData({ input, element }) {
-          const data = getBlockData(element) 
+        getData: ({ input, element }) => {
+          const data = getBlockData(element);
           return attachClosestEdge(data, {
             input,
             element,
-            allowedEdges: ['top', 'bottom']
-          })
+            allowedEdges: ['top', 'bottom'],
+          });
         },
-        getIsSticky() {
-          return true
-        },
-        onDragEnter({ self }) {
+        getIsSticky: () => true,
+        onDrag: ({ self }) => {
           const closestEdge = extractClosestEdge(self.data);
-          console.log("Dragging over", closestEdge)
+          this.highlightEdge(closestEdge);
         },
-        onDrag({ self }) {
+        onDragLeave: () => {
+          this.removeHighlight();
+          this.setIdleStatus();
+        },
+        onDrop: ({ source, self }) => {
+          this.removeHighlight();
+          this.setIdleStatus();
+
+          const sourceElement = source.element.closest('[data-controller~="block"][data-controller~="sortable"]');
+          const targetElement = self.element;
           const closestEdge = extractClosestEdge(self.data);
 
-          // if STATUS.type !== dragging-over && STATUS.currentEdge !== closestEdge
-          // UPDATE STATUS
+          if (sourceElement && targetElement) {
+            if (closestEdge === 'top') {
+              targetElement.parentNode.insertBefore(sourceElement, targetElement)
+            } else if (closestEdge === 'bottom') {
+              targetElement.parentNode.insertBefore(sourceElement, targetElement.nextSibling)
+            }
+
+            this.updatePositions();
+          }
         },
-        onDragLeave() {
-          // STATUS to idle
-        },
-        onDrop() {
-          // STATUS to idle
-        }
-      }),
-    )
+      })
+    );
   }
 
-  /**
-  This is thefinal call to update the block position
-  end(event) {
-    let id = event.item.dataset.blockId
-    let data = new FormData()
-    data.append("position", event.newIndex + 1)
+  setIdleStatus() {
+    this.dragHandle.classList.add('cursor-grab');
+    this.dragHandle.classList.remove('cursor-grabbing');
+  }
 
-    fetch(event.item.dataset.updateUrl, {
+  setDraggingStatus() {
+    this.dragHandle.classList.remove('cursor-grab');
+    this.dragHandle.classList.add('cursor-grabbing');
+  }
+
+  highlightEdge(edge) {
+    const letter = edge.substring(0, 1);
+    this.removeHighlight()
+    this.element.classList.add(`border-${letter}-2`, 'border-indigo-200', 'border-solid');
+  }
+
+  removeHighlight() {
+    this.element.classList.remove('border-t-2', 'border-b-2', 'border-indigo-200', 'border-solid');
+  }
+
+  updatePositions() {
+    const blocksContainer = document.getElementById('blocks');
+    const blockElements = blocksContainer.querySelectorAll('[data-controller~="block"][data-controller~="sortable"]');
+
+    const workspaceId = blocksContainer.dataset.workspaceId;
+    const pageId = blocksContainer.dataset.pageId;
+
+    const blocksData = [];
+
+    blockElements.forEach((blockElement, index) => {
+      const blockId = blockElement.dataset.blockId;
+      const newPosition = index + 1;
+
+      blockElement.dataset.blockPosition = newPosition;
+
+      blocksData.push({ id: blockId, position: newPosition });
+    });
+
+    const url = `/workspaces/${workspaceId}/pages/${pageId}/blocks/batch_update_positions`;
+
+    fetch(url, { 
       method: 'PATCH',
       headers: {
-        'X-CSRF-Token': document.querySelector("[name='csrf-token']").content
+        'X-CSRF-Token': document.querySelector("[name='csrf-token']").content,
+        'Content-Type': 'application/json',
       },
-      body: data
+      body: JSON.stringify({ blocks: blocksData })
     })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            console.error('Failed to batch update blocks:', data.error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Error batch updating blocks:', error);
+      });
   }
-   */
 }

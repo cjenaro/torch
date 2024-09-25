@@ -42,6 +42,33 @@ class BlocksController < ApplicationController
     end
   end
 
+  def batch_update_positions
+    blocks_data = params[:blocks]
+
+    unless blocks_data.is_a?(Array)
+      render json: { error: "Invalid data format" }, status: :unprocessable_entity
+      return
+    end
+
+    Block.transaction do
+      blocks_data.each do |block_data|
+        block = @page.blocks.find_by(id: block_data[:id])
+
+        if block.nil?
+          render json: { error: "Block with  id #{block_data[:id]} not found" }, status: :not_found
+          raise ActiveRecord::Rollback
+        end
+
+        unless block.update(position: block_data[:position])
+          render json: { error: block.errors.full_messages }, status: :unprocessable_entity
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+
+    head :ok
+  end
+
   private
 
   def set_workspace

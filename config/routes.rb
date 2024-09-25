@@ -30,7 +30,11 @@ Rails.application.routes.draw do
     end
 
     resources :pages do
-      resources :blocks, only: [:create, :update, :destroy]
+      resources :blocks, only: [:create, :update, :destroy] do
+        collection do
+          patch :batch_update_positions
+        end
+      end
     end
   end
 end
