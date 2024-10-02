@@ -20,10 +20,10 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="h-full">
-    <main class="flex flex-col lg:flex-row h-full"> 
+  <body class="h-full bg-indigo-600">
+    <main class="flex flex-col lg:flex-row min-h-full"> 
       <%= render 'layouts/sidebar' %>
-      <div class="flex flex-col h-full w-full">
+      <div class="flex flex-col w-full">
         <header class="bg-indigo-600 text-white p-4 hidden lg:block">
           <div class="container mx-auto flex justify-end items-center">
             <div class="flex gap-4">
@@ -72,7 +72,7 @@
             </div>
           </div>
         </header>
-        <div class="container mx-auto mt-8 px-2">
+        <div class="container mx-auto p-4 bg-white rounded-tl-md rounded-tr-md lg:rounded-tr-none min-h-full dark:bg-gray-800 dark:text-white">
           <% flash.each do |key, message| %>
             <div class="mb-4">
               <div class="alert alert-<%= key %>">
