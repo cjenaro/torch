@@ -52,6 +52,10 @@
         <% end %>
       </div>
     <% end %>
+
+    <% if block.block_type == 'database' %>
+      <%= render 'blocks/database', block: block %>
+    <% end %>
     <!-- Handle other block types similarly -->
   </div>
 </turbo-frame>

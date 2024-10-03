@@ -34,6 +34,8 @@ Rails.application.routes.draw do
         collection do
           patch :batch_update_positions
         end
+
+        resources :database_entries, except: [:index, :show]
       end
     end
   end

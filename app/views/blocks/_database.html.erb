@@ -1,0 +1,32 @@
+
+<div class="database-block">
+  <h3><%= block.content.presence || 'Untitled Database' %></h3>
+
+  <%= link_to 'Edit Database Schema', edit_workspace_page_block_path(@workspace, @page, block), class: 'btn btn-secondary' %>
+  <%= link_to 'Add Entry', new_workspace_page_block_database_entry_path(@workspace, @page, block), class: 'btn btn-primary' %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <% schema = block.data['schema'] || [] %>
+        <% schema.each do |field| %>
+          <th><%= field['name'] %></th>
+        <% end %>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% block.database_entries.each do |entry| %>
+        <tr>
+          <% schema.each do |field| %>
+            <td><%= entry.properties[field['name']] %></td>
+          <% end %>
+          <td>
+            <%= link_to 'Edit', edit_workspace_page_block_database_entry_path(@workspace, @page, block, entry), class: 'btn btn-secondary' %>
+            <%= link_to 'Delete', workspace_page_block_database_entry_path(@workspace, @page, block, entry), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

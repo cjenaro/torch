@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_24_123729) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_03_150203) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -72,6 +72,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_123729) do
     t.index ["page_id"], name: "index_blocks_on_page_id"
   end
 
+  create_table "database_entries", force: :cascade do |t|
+    t.integer "block_id", null: false
+    t.json "properties"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["block_id"], name: "index_database_entries_on_block_id"
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "workspace_id", null: false
@@ -125,6 +133,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_123729) do
   add_foreign_key "activities", "users"
   add_foreign_key "activities", "workspaces"
   add_foreign_key "blocks", "pages"
+  add_foreign_key "database_entries", "blocks"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "workspaces"
   add_foreign_key "pages", "pages", column: "parent_id"

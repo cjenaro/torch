@@ -2,6 +2,8 @@ class Block < ApplicationRecord
   belongs_to :page
   acts_as_list scope: :page
 
+  has_many :database_entries, foreign_key: 'block_id', dependent: :destroy
+
   has_one_attached :attachment
   has_rich_text :content
 
