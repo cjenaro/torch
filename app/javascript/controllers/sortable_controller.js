@@ -38,7 +38,6 @@ export default class extends Controller {
             }),
             render: ({ container }) => {
               // Customize your drag preview here if needed
-              console.log('Drag preview container:', container);
             },
           });
         },
@@ -119,8 +118,8 @@ export default class extends Controller {
     const blocksContainer = document.getElementById('blocks');
     const blockElements = blocksContainer.querySelectorAll('[data-controller~="block"][data-controller~="sortable"]');
 
-    const workspaceId = blocksContainer.dataset.workspaceId;
-    const pageId = blocksContainer.dataset.pageId;
+    const workspaceId = blocksContainer.dataset.blocksWorkspaceId;
+    const pageId = blocksContainer.dataset.blocksPageId;
 
     const blocksData = [];
 

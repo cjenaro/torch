@@ -7,8 +7,14 @@ import { application } from "./application"
 import BlockController from "./block_controller"
 application.register("block", BlockController)
 
+import BlocksController from "./blocks_controller"
+application.register("blocks", BlocksController)
+
 import CollapsibleController from "./collapsible_controller"
 application.register("collapsible", CollapsibleController)
+
+import CommandController from "./command_controller"
+application.register("command", CommandController)
 
 import GreetingsController from "./greetings_controller"
 application.register("greetings", GreetingsController)

@@ -1,49 +1,98 @@
-<turbo-frame id="<%= dom_id(block) %>">
-  <div class="block relative py-4 group" data-controller="block sortable" data-block-id="<%= block.id %>" data-block-position="<%= block.position %>" data-update-url="<%= workspace_page_block_path(@workspace, @page, block) %>">
-    <button class="flex flex-col cursor-grab invisible group-hover:visible group-focus:visible justify-evenly items-center drag-handle absolute right-full w-4 h-6">
-      <span class="sr-only">Drag to re-order</span>
-      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
-      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
-      <span class="rounded-full bg-gray-900 w-1 h-1"></span>
-    </button>
-    <% if block.block_type == 'text' %>
-      <div data-action="click->block#edit">
-        <div class="prose">
-          <%= block.content.body %>
-        </div>
-      </div>
-      <div data-block-target="editor" class="hidden">
-        <%= form_with model: [@workspace, @page, block], remote: true do |f| %>
-          <%= f.rich_text_area :content, class: "w-full" %>
-          <%= f.submit "Save", class: "btn btn-primary mt-2" %>
-        <% end %>
-      </div>
-    <% end %>
+<div 
+  id="<%= dom_id(block) %>"
+  class="block relative py-4 group row-start-<%= block.position %> row-end-<%= block.position %>"
+       data-controller="block sortable"
+       data-action="keydown->blocks#checkForSlash"
+       data-block-type="<%= block.block_type %>"
+       data-block-id="<%= block.id %>"
+       data-block-position="<%= block.position %>"
+       data-update-url="<%= workspace_page_block_path(@workspace, @page, block) %>"
+       data-block-workspace-id="<%= @workspace.id %>"
+       data-block-page-id="<%= @page.id %>">
 
-    <% if block.block_type == 'image' %>
+    <!-- Drag Handle -->
+    <button class="pr-1 top-5 grid grid-cols-2 cursor-grab invisible group-hover:visible group-focus:visible justify-evenly items-center drag-handle absolute right-full w-5 h-6">
+      <span class="sr-only">Drag to re-order</span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+      <span class="rounded-full bg-gray-900 dark:bg-gray-100 w-1 h-1"></span>
+    </button>
+
+    <% case block.block_type %>
+    <% when 'text' %>
+      <p contenteditable="true"
+           data-action="input->blocks#updateContent keydown->blocks#keyDown"
+           data-blocks-target="content"
+           class="text-base m-0">
+       <% if block.content && block.content.body %>
+          <%= block.content.body.html_safe %>
+        <% end %>
+      </p>
+    <% when 'heading_1' %>
+      <h1 contenteditable="true"
+          data-action="input->blocks#updateContent keydown->blocks#keyDown"
+          data-blocks-target="content"
+          class="text-3xl m-0"
+          >
+       <% if block.content && block.content.body %>
+          <%= block.content.body.html_safe %>
+        <% end %>
+      </h1>
+    <% when 'heading_2' %>
+      <h2 contenteditable="true"
+          data-action="input->blocks#updateContent keydown->blocks#keyDown"
+          data-blocks-target="content"
+          class="text-2xl m-0"
+          >
+       <% if block.content && block.content.body %>
+          <%= block.content.body.html_safe %>
+        <% end %>
+      </h2>
+    <% when 'heading_3' %>
+      <h3 contenteditable="true"
+          data-action="input->blocks#updateContent keydown->blocks#keyDown"
+          data-blocks-target="content"
+          class="text-xl m-0"
+          >
+       <% if block.content && block.content.body %>
+          <%= block.content.body.html_safe %>
+        <% end %>
+      </h3>
+    <% when 'image' %>
       <div>
-        <%= image_tag block.attachment.variant(resize_to_limit: [800, 600]) %>
+        <%# <%= image_tag block.attachment.variant(resize_to_limit: [800, 600]) %> %>
         <%= form_with model: [@workspace, @page, block], method: :delete, data: { confirm: "Are you sure?" }, class: "mt-2" do |f| %>
           <%= f.submit "Remove Image", class: "btn btn-secondary" %>
         <% end %>
       </div>
-    <% end %>
-
-    <% if block.block_type == 'list' %>
-      <ul class="list-disc pl-5">
-        <% block.data['items'].each_with_index do |item, index| %>
-          <li data-action="click->block#editItem" data-block-target="item" data-index="<%= index %>">
-            <%= item %>
-          </li>
+    <% when 'bulleted_list', 'numbered_list' %>
+        <%= content_tag(
+          block.block_type == 'bulleted_list' ? :ul : :ol,
+          nil,
+          class: "#{block.block_type == 'bulleted_list' ? 'list-disc' : 'list-decimal'} pl-5",
+          data: {
+            'block-id' => block.id,
+            'block-type' => block.block_type,
+            'block-position' => block.position
+          }
+        ) do %>
+          <% block.data['items'].each_with_index do |item, index| %>
+            <li contenteditable="true"
+                data-action="input->blocks#updateListItem keydown->blocks#handleListKeyDown"
+                data-index="<%= index %>">
+              <%= item.html_safe %>
+            </li>
+          <% end %>
         <% end %>
-      </ul>
-      <!-- Form for editing list items -->
-    <% end %>
-
-    <% if block.block_type == 'code' %>
-      <div data-action="click->block#edit">
-        <pre><code class="language-<%= block.data['language'] || 'plaintext' %>"><%= block.content %></code></pre>
-      </div>
+    <% when 'code' %>
+      <pre data-action="click->block#edit">
+        <code class="language-<%= block.data['language'] || 'plaintext' %>">
+          <%= block.content.html_safe %>
+        </code>
+      </pre>
       <div data-block-target="editor" class="hidden">
         <%= form_with model: [@workspace, @page, block], remote: true do |f| %>
           <%= f.select :data, options_for_select(['ruby', 'javascript', 'python'], block.data['language']), {}, class: "w-full px-4 py-2 border rounded mb-2" %>
@@ -51,11 +100,18 @@
           <%= f.submit "Save", class: "btn btn-primary mt-2" %>
         <% end %>
       </div>
+    <% when 'database' %>
+      <%= render 'blocks/database', block: block %>
+    <% else %>
+      <!-- Handle other block types or default behavior -->
+      <div contenteditable="true"
+           data-action="input->blocks#updateContent keydown->blocks#keyDown"
+           data-blocks-target="content">
+           <% if block.content && block.content.body %>
+             <%= block.content.body.html_safe %>
+           <% end %>
+      </div>
     <% end %>
 
-    <% if block.block_type == 'database' %>
-      <%= render 'blocks/database', block: block %>
-    <% end %>
-    <!-- Handle other block types similarly -->
-  </div>
-</turbo-frame>
+    <%= button_to "Delete", workspace_page_block_path(@workspace, @page, block), method: :delete, class: "text-red-500 hover:text-red-700 absolute top-[1.7em] right-2 group-hover:block group-focus-within:block hidden text-sm" %>
+</div>

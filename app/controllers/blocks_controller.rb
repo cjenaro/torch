@@ -2,18 +2,19 @@ class BlocksController < ApplicationController
   before_action :require_login
   before_action :set_workspace
   before_action :set_page
-  before_action :set_block, only: [:update, :destroy]
+  before_action :set_block, only: [ :update, :destroy ]
 
   def create
     @block = @page.blocks.new(block_params)
+    @insert_after = params[:insert_after]
 
     respond_to do |format|
       if @block.save
         format.turbo_stream
-        format.html { redirect_to @block, notice: 'Block was successfully created.' }
+        format.html { redirect_to workspace_page_path(@workspace, @page), notice: "Block was successfully created." }
       else
-        format.turbo_stream { render turbo_stream: turbo_stream.replace('new_block_form', partial: 'form', locals: { block: @block }) }
-        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream
+        format.html { redirect_to workspace_page_path(@workspace, @page), alert: "Couldn't create block." }
       end
     end
   end
@@ -22,11 +23,13 @@ class BlocksController < ApplicationController
     if params[:position]
       @block.insert_at(params[:position].to_i)
       head :ok
-    else 
+    else
       respond_to do |f|
         if @block.update(block_params)
           f.turbo_stream
-        else 
+          f.json { render json: { success: true } }
+          f.html { redirect_to workspace_page_path(@workspace, @page), notice: "Block updated." }
+        else
           f.html { render :edit, status: :unprocessable_entity }
         end
       end
@@ -38,7 +41,7 @@ class BlocksController < ApplicationController
 
     respond_to do |f|
       f.turbo_stream
-      f.html { redirect_to workspace_page_path(@workspace, @page) } 
+      f.html { redirect_to workspace_page_path(@workspace, @page) }
     end
   end
 

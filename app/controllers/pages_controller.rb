@@ -1,8 +1,8 @@
 class PagesController < ApplicationController
   before_action :require_auth
   before_action :set_workspace
-  before_action :set_page, only: [:show, :edit, :update, :destroy, :duplicate]
-  before_action :authorize_page, except: [:new, :create]
+  before_action :set_page, only: [ :show, :edit, :update, :destroy, :duplicate ]
+  before_action :authorize_page, except: [ :new, :create, :update ]
 
   def new
     @page = @workspace.pages.new(parent_id: params[:parent_id])
@@ -21,7 +21,7 @@ class PagesController < ApplicationController
     end
 
     if @page.save
-      @workspace.activities.create(user: current_user, action: 'created', trackable: @page)
+      @workspace.activities.create(user: current_user, action: "created", trackable: @page)
       flash[:notice] = "Page created"
       redirect_to workspace_page_path(@workspace, @page)
     else
@@ -37,10 +37,11 @@ class PagesController < ApplicationController
   end
 
   def update
-    if @page.update
-      @workspace.activities.create(user: current_user, action: 'updated', trackable: @page)
-      flash[:notice] = "Page updated"
-      redirect_to workspace_page_path(@workspace, @page)
+    if @page.update(page_params)
+      respond_to do |format|
+        format.turbo_stream
+        format.json { render json: { success: true } }
+      end
     else
       render :edit, status: :unprocessable_entity
     end

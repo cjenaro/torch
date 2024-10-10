@@ -20,10 +20,10 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="h-full bg-indigo-600">
-    <main class="flex flex-col lg:flex-row min-h-full"> 
+  <body class="h-full bg-indigo-600 flex">
+    <main class="flex flex-col lg:flex-row min-h-full basis-full"> 
       <%= render 'layouts/sidebar' %>
-      <div class="flex flex-col w-full">
+      <div class="flex flex-col w-full h-full">
         <header class="bg-indigo-600 text-white p-4 hidden lg:block">
           <div class="container mx-auto flex justify-end items-center">
             <div class="flex gap-4">

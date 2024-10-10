@@ -1,11 +1,60 @@
-<div class="px-6">
-  <h1 class="text-3xl font-bold mb-4"><%= @page.title %></h1>
+<div class="px-6 prose prose-2xl prose-zinc dark:prose-invert">
+    <div data-controller="blocks"
+         data-blocks-workspace-id="<%= @workspace.id %>"
+         data-blocks-page-id="<%= @page.id %>">
 
-  <div id="blocks" data-workspace-id="<%= @workspace.id %>" data-page-id="<%= @page.id %>">
-    <%= render @page.blocks %>
-  </div>
+      <!-- Page Title Block -->
+      <h1 
+        id="<%= dom_id(@page, :title) %>"
+        class="page-title-block"
+         contenteditable="true"
+         data-action="input->blocks#updatePageTitle keydown->blocks#handleTitleKeyDown"
+         data-blocks-target="pageTitle">
+        <%= @page.title.presence || "Untitled" %>
+      </h1>
 
-  <button onclick="document.querySelector('#new-block-form').classList.toggle('hidden')" class="mt-4 btn btn-primary">Add Block</button>
+      <!-- Blocks -->
+      <div id="<%= dom_id(@page, :blocks) %>" class="grid grid-cols-1 grid-flow-row">
+        <% @page.blocks.order(:position).each do |block| %>
+          <%= render partial: "blocks/block", locals: { block: block, workspace: @workspace, page: @page } %>
+        <% end %>
+      </div>
 
-  <%= render partial: "blocks/form", locals: { block: @page.blocks.new } %>
+      <div
+          popover
+          id="slashMenu"
+          class="m-0  left-2/4 translate-x-[-50%] translate-y-[-50%] top-2/4 rounded-sm bg-transparent w-full max-w-xl "
+          data-blocks-target="slashMenu"
+          data-controller="command"
+          data-action="keydown->command#keyDown"
+        >
+        <input data-action="input->command#filter" type="search" autofocus class="w-full rounded-sm mb-2 bg-white text-gray-900 dark:text-white dark:bg-gray-900 ring-1 ring-black dark:ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm" />
+        <ul
+          class="max-h-60 list-none pl-0 overflow-auto rounded-md bg-white dark:bg-gray-900 text-base shadow-lg ring-1 ring-black dark:ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
+          tabindex="-1"
+          role="listbox"
+          aria-labelledby="listbox-label"
+          aria-activedescendant="listbox-option-3"
+      >
+          <% Block::BLOCK_TYPES.each do |type| %>
+            <li
+              tabindex="0"
+              data-action="keydown->blocks#insertBlockKeys click->blocks#insertBlock"
+              data-block-type="<%= type %>"
+              class="relative cursor-default my-0 select-none py-2 pl-3 pr-9 focus:bg-indigo-600 focus:text-white group"
+              id="listbox-option-0"
+              role="option">
+              <span class="block truncate font-normal text-gray-900 dark:text-white ">
+                <%= type.humanize %>
+              </span>
+              <span class="absolute inset-y-0 right-0 flex items-center pr-4 group-focus:text-white dark:text-gray-900 text-white">
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
 </div>

@@ -1,0 +1,10 @@
+<%= turbo_stream.replace dom_id(@page, :title) do %>
+  <h1 
+    id="<%= dom_id(@page, :title) %>"
+    class="page-title-block"
+    contenteditable="true"
+    data-action="input->blocks#updatePageTitle keydown->blocks#handleTitleKeyDown"
+    data-blocks-target="pageTitle">
+    <%= sanitize @page.title.presence || "Untitled" %>
+  </h1>
+<% end %>

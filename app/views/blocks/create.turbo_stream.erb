@@ -1,5 +1,5 @@
-<%= turbo_stream.append 'blocks', partial: 'blocks/block', locals: { block: @block } %>
-
-<%= turbo_stream.replace 'new_block' do %>
-  <%= render 'blocks/form', block: Block.new %>
+<% if @insert_after %>
+  <%= turbo_stream.after @insert_after, partial: 'blocks/block', locals: { block: @block } %>
+<% else %>
+  <%= turbo_stream.append dom_id(@page), partial: 'blocks/block', locals: { block: @block } %>
 <% end %>
