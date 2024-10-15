@@ -1,14 +1,14 @@
 <li>
-  <a href="<%= new_workspace_path %>" class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white">
-    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">+</span>
+  <a href="<%= new_workspace_path %>" class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-highlight-200 hover:bg-highlight-700 hover:text-white">
+    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-highlight-400 bg-highlight-500 text-[0.625rem] font-medium text-white">+</span>
     <span class="truncate">New Workspace</span>
   </a>
 </li>
 <% @workspaces.each do |ws| %>
   <% if ws.id %>
     <li>
-      <a href="<%= workspace_path(ws) %>" class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-indigo-200 hover:bg-indigo-700 hover:text-white">
-        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
+      <a href="<%= workspace_path(ws) %>" class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-highlight-200 hover:bg-highlight-700 hover:text-white">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-highlight-400 bg-highlight-500 text-[0.625rem] font-medium text-white">
           <%= ws.name[0, 1] %>
         </span>
         <span class="truncate"><%= ws.name %></span>

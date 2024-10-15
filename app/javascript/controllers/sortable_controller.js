@@ -38,7 +38,7 @@ export default class extends Controller {
             }),
             render: ({ container }) => {
               // Customize your drag preview here if needed
-            },
+            }
           });
         },
         onDragStart: () => {
@@ -107,11 +107,11 @@ export default class extends Controller {
   highlightEdge(edge) {
     const letter = edge.substring(0, 1);
     this.removeHighlight()
-    this.element.classList.add(`border-${letter}-2`, 'border-indigo-200', 'border-solid');
+    this.element.classList.add(`border-${letter}-2`, 'border-highlight-200', 'border-solid');
   }
 
   removeHighlight() {
-    this.element.classList.remove('border-t-2', 'border-b-2', 'border-indigo-200', 'border-solid');
+    this.element.classList.remove('border-t-2', 'border-b-2', 'border-highlight-200', 'border-solid');
   }
 
   updatePositions() {
@@ -134,7 +134,7 @@ export default class extends Controller {
 
     const url = `/workspaces/${workspaceId}/pages/${pageId}/blocks/batch_update_positions`;
 
-    fetch(url, { 
+    fetch(url, {
       method: 'PATCH',
       headers: {
         'X-CSRF-Token': document.querySelector("[name='csrf-token']").content,

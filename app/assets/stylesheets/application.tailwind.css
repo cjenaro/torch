@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --color-gray-950: #030712;
+    --color-gray-700: #374151;
+    --color-gray-50: #f9fafb;
+    --color-gray-300: #d1d5db;
+
+    --text-base: var(--color-gray-950);
+    --text-muted: var(--color-gray-700);
+  }
+
+  .dark {
+    --text-base: var(--color-gray-50);
+    --text-muted: var(--color-gray-300);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-base: var(--color-gray-50);
+      --text-muted: var(--color-gray-300);
+    }
+  }
+}
+
 /*
 
 @layer components {
@@ -71,4 +95,5 @@
     }
   }
 }
+
 @import 'actiontext.css';

@@ -9,7 +9,7 @@
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
       <% if policy(@workspace).manage_members? %>
-        <%= link_to "Invite Member", manage_members_workspace_path(@workspace), class: "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+        <%= link_to "Invite Member", manage_members_workspace_path(@workspace), class: "block rounded-md bg-highlight-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-highlight-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight-600" %>
       <% end %>
     </div>
   </div>
@@ -36,7 +36,7 @@
                 <% if policy(@workspace).manage_members? %>
                   <td class="flex flex-col md:flex-row relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-8 lg:pr-8">
                     <% unless membership.owner? %>
-                      <%= link_to "Change Role", edit_workspace_membership_path(@workspace, membership), class: "text-indigo-600 hover:text-indigo-900" %>
+                      <%= link_to "Change Role", edit_workspace_membership_path(@workspace, membership), class: "text-highlight-600 hover:text-highlight-900" %>
                       <%= link_to "Remove", workspace_membership_path(@workspace, membership), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900 ml-2" %>
                     <% end %>
 
