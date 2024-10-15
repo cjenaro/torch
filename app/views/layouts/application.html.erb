@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-full">
+<html>
   <head>
     <title><%= content_for(:title) || "Torch" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,7 +23,7 @@
   <body class="h-full bg-indigo-600 flex">
     <main class="flex flex-col lg:flex-row min-h-full basis-full"> 
       <%= render 'layouts/sidebar' %>
-      <div class="flex flex-col w-full h-full">
+      <div class="flex flex-col w-full" >
         <header class="bg-indigo-600 text-white p-4 hidden lg:block">
           <div class="container mx-auto flex justify-end items-center">
             <div class="flex gap-4">
@@ -43,7 +43,7 @@
                       <button popovertarget="profile-menu" popovertargetaction="show"  type="button" class="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="absolute -inset-1.5"></span>
                         <span class="sr-only">Open user menu</span>
-                        <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                        <img class="h-8 w-8 rounded-full" src="<%= gravatar %>" alt="<%= current_user.name %>">
                       </button>
                     </div>
 

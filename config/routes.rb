@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   root "workspaces#index"
 
   get "signup", to: "users#new"
-  resources :users, only: [ :create, :show ]
+  resources :users, only: [ :create, :show, :update ]
 
   get "login", to: "sessions#new"
   post "login", to: "sessions#create"
@@ -30,19 +30,13 @@ Rails.application.routes.draw do
     end
 
     resources :pages do
-      resources :blocks, only: [:create, :update, :destroy] do
+      resources :blocks, only: [ :create, :update, :destroy ] do
         collection do
           patch :batch_update_positions
         end
 
-        resources :database_entries, except: [:index, :show]
+        resources :database_entries, except: [ :index, :show ]
       end
     end
   end
 end
-
-
-
-
-
-

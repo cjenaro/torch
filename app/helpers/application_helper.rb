@@ -1,11 +1,15 @@
 module ApplicationHelper
   def gravatar
-    hash = Digest::SHA256.hexdigest(current_user.email.downcase)
-    
-    default = current_user.avatar
-    size = 40
+    if current_user.avatar_attachment
+      return url_for(current_user.avatar_attachment)
+    end
 
-    params = URI.encode_www_form('d' => default, 's' => size)
+    hash = Digest::SHA256.hexdigest(current_user.email.downcase)
+
+    default = "https://fav.farm/🔥"
+    size = 200
+
+    params = URI.encode_www_form("d" => default, "s" => size)
     "https://www.gravatar.com/avatar/#{hash}?#{params}"
   end
 end

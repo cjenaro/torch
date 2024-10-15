@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [ :update, :destroy ]
+  before_action :require_login, only: [ :update, :destroy ]
+
   def new
     @user = User.new
   end
@@ -15,6 +18,19 @@ class UsersController < ApplicationController
     end
   end
 
+  def update
+    if @user.update(user_update_params)
+      redirect_to current_user
+    else
+      Rails.logger.debug @user.errors
+      render :show, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    # TODO
+  end
+
   def show
     @user = User.find(params[:id])
     @workspaces = @user.workspaces
@@ -24,5 +40,20 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
+  end
+
+  def user_update_params
+    params.require(:user).permit(:name, :email, :avatar_attachment)
+  end
+
+  def require_login
+    unless logged_in?
+      flash[:alert] = "You must be logged in to access this section"
+      redirect_to login_url
+    end
+  end
+
+  def set_user
+    @user = current_user
   end
 end

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
+  has_one_attached :avatar_attachment
 
   has_many :memberships, dependent: :destroy
   has_many :workspaces, through: :memberships
@@ -15,7 +16,10 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 100 },
     format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }
 
-  validates :password, presence: true, length: { minimum: 8 }
+  validates :password, presence: true, confirmation: true, length: { in: 6..20 }, on: :create
+  validates :password, presence: true, confirmation: true, length: { in: 6..20 }, on: :update, if: :password_digest_changed?
+  validates :password_confirmation, presence: true, on: :create
+  validates :password_confirmation, presence: true, on: :update, if: :password_digest_changed?
 
   attr_accessor :activation_token
   attr_accessor :reset_token
